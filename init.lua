@@ -584,14 +584,6 @@ require('lazy').setup({
     end,
   },
   {
-    'chikko80/error-lens.nvim',
-    event = 'BufRead',
-    dependencies = {
-      'nvim-telescope/telescope.nvim',
-    },
-    opts = {},
-  },
-  {
     'phaazon/hop.nvim',
     event = 'BufRead',
     branch = 'v2',
@@ -902,7 +894,7 @@ require('lazy').setup({
   {
     'lukas-reineke/indent-blankline.nvim',
     config = function()
-      local ibl = require('ibl').setup {
+      require('ibl').setup {
         indent = {
           smart_indent_cap = false,
           highlight = 'LineNr',
@@ -1151,8 +1143,18 @@ require('lazy').setup({
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
       ---@diagnostic disable-next-line: missing-fields
-      require('nvim-treesitter.configs').setup(opts)
-
+      local more_opts = vim.tbl_deep_extend('force', opts, {
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = 'gnn', -- set to `false` to disable one of the mappings
+            node_incremental = 'grn',
+            scope_incremental = 'grc',
+            node_decremental = 'grm',
+          },
+        },
+      })
+      require('nvim-treesitter.configs').setup(more_opts)
       -- There are additional nvim-treesitter modules that you can use to interact
       -- with nvim-treesitter. You should go explore a few and see what interests you:
       --
