@@ -580,6 +580,7 @@ require('lazy').setup({
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
         ['<leader>d'] = { name = '[D]ocument Types', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
+        ['<leader>L'] = { name = '[L]azy', _ = 'which_key_ignore' },
       }
     end,
   },
@@ -1256,6 +1257,15 @@ require('lazy').setup({
     },
   },
 })
+
+vim.keymap.set('n', '<leader>Lc', '<cmd>Lazy clean<cr>', { desc = '[C]lean' })
+vim.keymap.set('n', '<leader>LC', '<cmd>Lazy check<cr>', { desc = '[C]heck' })
+vim.keymap.set('n', '<leader>Lh', '<cmd>Lazy help<cr>', { desc = '[H]elp' })
+vim.keymap.set('n', '<leader>Ll', '<cmd>Lazy home<cr>', { desc = '[L]list' })
+vim.keymap.set('n', '<leader>Li', '<cmd>Lazy install<cr>', { desc = '[I]nstall' })
+vim.keymap.set('n', '<leader>LL', '<cmd>Lazy log<cr>', { desc = '[L]og' })
+vim.keymap.set('n', '<leader>Lu', '<cmd>Lazy update<cr>', { desc = '[U]pdate' })
+vim.keymap.set('n', '<leader>Ls', '<cmd>Lazy sync<cr>', { desc = '[S]ync' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
