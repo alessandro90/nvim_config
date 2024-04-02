@@ -146,13 +146,13 @@ vim.keymap.set('n', '<leader>o', 'o<Esc>0"_D', { desc = 'Add empty line below' }
 vim.keymap.set('n', '<leader>O', 'O<Esc>0"_D', { desc = 'Add empty line above' })
 
 -- Save everything and exit
-vim.keymap.set('n', '<c-q>', '<cmd>wa<cr><cmd>qa<cr>')
+vim.keymap.set('n', '<c-q>', '<cmd>qa<cr>')
 
 -- Alternate save
-vim.keymap.set('n', '<C-s>', '<cmd>w<cr>', { desc = 'Save file' })
+vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', { desc = 'Save file' })
 
 -- Select all file
-vim.keymap.set('n', '<C-a>', 'Gvgg')
+vim.keymap.set('n', '<C-a>', 'G<s-v>gg')
 
 -- Exit for terminal mode: does not untoggle the terminal
 vim.api.nvim_set_keymap('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
@@ -235,6 +235,7 @@ require('lazy').setup({
     'akinsho/bufferline.nvim',
     version = '*',
     dependencies = 'nvim-tree/nvim-web-devicons',
+    event = 'BufReadPre',
     config = function()
       require('bufferline').setup {
         highlights = {
@@ -577,7 +578,6 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>d'] = { name = '[D]ocument Types', _ = 'which_key_ignore' },
         ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
       }
@@ -777,7 +777,7 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map('<leader>sw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
@@ -907,6 +907,7 @@ require('lazy').setup({
   },
   { -- Autoformat
     'stevearc/conform.nvim',
+    lazy = false,
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)
@@ -923,7 +924,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'black' },
+        python = { 'isort', 'black' },
         c = { 'clang-format ' },
         cpp = { 'clang-format ' },
         --
