@@ -528,10 +528,23 @@ require('lazy').setup({
       require('gitsigns').setup {
         on_attach = function(bufnr)
           local gs = package.loaded.gitsigns
-          vim.keymap.set('n', '<leader>Gb', gs.toggle_current_line_blame, { desc = 'Blame' })
-          vim.keymap.set('n', '<leader>GB', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>', { desc = 'Blame full' })
-          vim.keymap.set('n', '<leader>Gd', '<cmd>Gitsigns diffthis<CR>', { desc = 'Diff' })
-          vim.keymap.set('n', '<leader>Gt', '<cmd>Gitsigns toggle_deleted<CR>', { desc = 'Toggle deleted' })
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+          map('n', '<leader>Gb', gs.toggle_current_line_blame, { desc = 'Blame' })
+          map('n', '<leader>GB', function()
+            gs.blame_line { full = true }
+          end, { desc = 'Blame full' })
+          map('n', '<leader>Gd', gs.diffthis, { desc = 'Diff' })
+          map('n', '<leader>Gt', gs.toggle_deleted, { desc = 'Toggle deleted' })
+          map('v', '<leader>Gr', function()
+            gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+          end, { desc = 'rest hunk' })
+          map('n', '<leader>Gu', gs.undo_stage_hunk, { desc = 'Undo stage hunk' })
+          map('n', '<leader>Gp', gs.preview_hunk, { desc = 'Preview hunk' })
+          map('n', '<leader>GR', gs.reset_buffer, { desc = 'Reset Buffer' })
         end,
       }
     end,
