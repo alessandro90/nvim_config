@@ -143,7 +143,7 @@ vim.keymap.set('n', '<leader>o', 'o<Esc>0"_D', { desc = 'Add empty line below' }
 vim.keymap.set('n', '<leader>O', 'O<Esc>0"_D', { desc = 'Add empty line above' })
 
 -- Save everything and exit
-vim.keymap.set('n', '<c-q>', '<cmd>qa<cr>')
+vim.keymap.set('n', '<leader>qa', '<cmd>qa<cr>', { desc = 'Close and exit' })
 
 -- Alternate save
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', { desc = 'Save file' })
@@ -229,20 +229,11 @@ require('lazy').setup({
     end,
   },
   {
-    'nvimdev/dashboard-nvim',
-    event = 'VimEnter',
+    'goolord/alpha-nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      require('dashboard').setup {
-        theme = 'hyper',
-        config = {
-          footer = {},
-          week_header = {
-            enable = true,
-          },
-        },
-      }
+      require('alpha').setup(require('alpha.themes.startify').config)
     end,
-    dependencies = { { 'nvim-tree/nvim-web-devicons' } },
   },
   {
     'nvim-tree/nvim-tree.lua',
