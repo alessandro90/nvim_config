@@ -106,10 +106,23 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic error messages' })
+vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic quickfix list' })
+
+-- Close all ancillary windows with just 'q'
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  group = vim.api.nvim_create_augroup('userconfig', { clear = true }),
+  desc = "keymap 'q' to close help/quickfix/netrw/etc windows",
+  pattern = 'help,qf,netrw',
+  callback = function()
+    vim.keymap.set('n', 'q', '<C-w>c', {
+      buffer = true,
+      desc = 'Quit (or Close) help, quickfix, netrw, etc windows',
+    })
+  end,
+})
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -136,14 +149,14 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 vim.keymap.set('n', '<leader>v', '<c-w>v', { desc = 'Split vertical' })
 vim.keymap.set('n', 'm', '<c-w>|', { desc = 'Maximize split' })
-vim.keymap.set('n', 'm', '<c-w>=', { desc = 'Resize split' })
+vim.keymap.set('n', 'M', '<c-w>=', { desc = 'Resize split' })
 
 -- Add empty line before/after. Keep normal mode
 vim.keymap.set('n', '<leader>o', 'o<Esc>0"_D', { desc = 'Add empty line below' })
 vim.keymap.set('n', '<leader>O', 'O<Esc>0"_D', { desc = 'Add empty line above' })
 
 -- Save everything and exit
-vim.keymap.set('n', '<leader>qa', '<cmd>qa<cr>', { desc = 'Close and exit' })
+vim.keymap.set('n', '<leader>q', '<cmd>qa<cr>', { desc = 'Close and exit' })
 
 -- Alternate save
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', { desc = 'Save file' })
@@ -486,8 +499,12 @@ require('lazy').setup({
     version = '*',
     config = function()
       require('toggleterm').setup()
-      vim.keymap.set('n', '<A-3>', '<cmd>ToggleTerm size=30<cr>', { desc = '[T]erminal' })
-      vim.keymap.set('t', '<A-3>', '<C-\\><C-n><cmd>ToggleTerm<cr>')
+
+      vim.keymap.set('n', '<A-3>', '<cmd>1ToggleTerm size=30<cr>', { desc = '[T]erminal' })
+      vim.keymap.set('t', '<A-3>', '<C-\\><C-n><cmd>1ToggleTerm<cr>')
+
+      vim.keymap.set('n', '<A-2>', '<cmd>2ToggleTerm direction=float<cr>', { desc = '[T]erminal' })
+      vim.keymap.set('t', '<A-2>', '<C-\\><C-n><cmd>2ToggleTerm<cr>')
     end,
   },
 
@@ -507,6 +524,17 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+    config = function()
+      require('gitsigns').setup {
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+          vim.keymap.set('n', '<leader>Gb', gs.toggle_current_line_blame, { desc = 'Blame' })
+          vim.keymap.set('n', '<leader>GB', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>', { desc = 'Blame full' })
+          vim.keymap.set('n', '<leader>Gd', '<cmd>Gitsigns diffthis<CR>', { desc = 'Diff' })
+          vim.keymap.set('n', '<leader>Gt', '<cmd>Gitsigns toggle_deleted<CR>', { desc = 'Toggle deleted' })
+        end,
+      }
+    end,
   },
   -- Make transparent background
   { 'tribela/vim-transparent' },
@@ -608,12 +636,13 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').register {
-        ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
-        ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
-        ['<leader>d'] = { name = '[D]ocument Types', _ = 'which_key_ignore' },
-        ['<leader>b'] = { name = '[B]uffers', _ = 'which_key_ignore' },
-        ['<leader>L'] = { name = '[L]azy', _ = 'which_key_ignore' },
+        ['<leader>r'] = { name = 'Rename', _ = 'which_key_ignore' },
+        ['<leader>s'] = { name = 'Search', _ = 'which_key_ignore' },
+        ['<leader>c'] = { name = 'Code', _ = 'which_key_ignore' },
+        ['<leader>b'] = { name = 'Buffers', _ = 'which_key_ignore' },
+        ['<leader>L'] = { name = 'Lazy', _ = 'which_key_ignore' },
+        ['<leader>l'] = { name = 'Lsp', _ = 'which_key_ignore' },
+        ['<leader>G'] = { name = 'Git', _ = 'which_key_ignore' },
       }
     end,
   },
@@ -699,16 +728,16 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader>bf', builtin.buffers, { desc = '[F]ind existing buffers' })
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Search help' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = 'Search keymaps' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Search files' })
+      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = 'Search select Telescope' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'Search current word' })
+      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by grep' })
+      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'Search diagnostics' })
+      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'Search resume' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>bf', builtin.buffers, { desc = 'Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -726,12 +755,12 @@ require('lazy').setup({
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = 'Search [/] in Open Files' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
-      end, { desc = '[S]earch [N]eovim files' })
+      end, { desc = 'Search Neovim files' })
     end,
   },
 
@@ -791,35 +820,35 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', require('telescope.builtin').lsp_definitions, 'Goto definition')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', require('telescope.builtin').lsp_references, 'Goto references')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gI', require('telescope.builtin').lsp_implementations, 'Goto implementation')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('<leader>lD', require('telescope.builtin').lsp_type_definitions, 'Type definition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('<leader>ld', require('telescope.builtin').lsp_document_symbols, 'Document symbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>sw', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map('<leader>lw', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Workspace symbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<leader>lr', vim.lsp.buf.rename, 'Rename')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('<leader>la', vim.lsp.buf.code_action, 'Code action')
 
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
@@ -827,7 +856,7 @@ require('lazy').setup({
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gD', vim.lsp.buf.declaration, 'Goto declaration')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
