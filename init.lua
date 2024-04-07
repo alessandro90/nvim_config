@@ -103,7 +103,10 @@ vim.g.loaded_netrwPlugin = 1
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', '<leader>h', '<cmd>nohlsearch<CR>', { desc = 'Clear highlight' })
+
+vim.keymap.set('n', '<tab>', '>>')
+vim.keymap.set('n', '<S-Tab>', '<<')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
@@ -131,6 +134,11 @@ vim.api.nvim_create_autocmd({ 'FileType' }, {
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+-- Delete without yaking
+vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d', { desc = 'Like "d" but do not yank' })
+vim.keymap.set({ 'n', 'v' }, '<leader>D', '"_D', { desc = 'Like "D" but do not yank' })
+vim.keymap.set('v', '<leader>p', '"_dP', { desc = 'Visual mode paste. No reg. change' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -272,7 +280,7 @@ require('lazy').setup({
           vim.keymap.set('n', 'l', api.node.open.edit, opts 'Open')
           vim.keymap.set('n', 'h', api.node.navigate.parent_close, opts 'Collapse')
           -- Make transparent bg
-          vim.cmd [[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
+          -- vim.cmd [[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
         end,
       }
     end,
@@ -550,7 +558,17 @@ require('lazy').setup({
     end,
   },
   -- Make transparent background
-  { 'tribela/vim-transparent' },
+  -- { 'tribela/vim-transparent' },
+  {
+    'xiyaowong/transparent.nvim',
+    opts = {
+      extra_groups = {
+        'NormalFloat', -- plugins which have float panel such as Lazy, Mason, LspInfo
+        'NvimTreeNormal', -- NvimTree
+      },
+    },
+    lazy = false,
+  },
   -- For example, in the following configuration, we use:
   --  event = 'VimEnter'
   --
@@ -978,7 +996,7 @@ require('lazy').setup({
         scope = {
           enabled = true,
         },
-        exclude = { filetypes = { 'dashboard' } },
+        -- exclude = { filetypes = { 'alpha' } },
       }
     end,
   },
