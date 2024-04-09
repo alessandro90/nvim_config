@@ -692,9 +692,9 @@ require('lazy').setup({
     end,
   },
   {
-    'phaazon/hop.nvim',
+    'smoka7/hop.nvim',
     event = 'BufRead',
-    branch = 'v2',
+    version = '*',
     config = function()
       require('hop').setup()
       vim.keymap.set('n', 's', ':HopChar2<cr>', { silent = true })
