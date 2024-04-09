@@ -237,6 +237,9 @@ require('lazy').setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('lualine').setup {
+        options = {
+          theme = 'catppuccin',
+        },
         sections = {
           lualine_c = {
             {
@@ -508,11 +511,14 @@ require('lazy').setup({
     config = function()
       require('toggleterm').setup()
 
-      vim.keymap.set('n', '<A-3>', '<cmd>1ToggleTerm size=30<cr>', { desc = '[T]erminal' })
-      vim.keymap.set('t', '<A-3>', '<C-\\><C-n><cmd>1ToggleTerm<cr>')
+      vim.keymap.set('n', '<A-1>', '<cmd>1ToggleTerm size=125 direction=vertical<cr>', { desc = '[T]erminal' })
+      vim.keymap.set('t', '<A-1>', '<C-\\><C-n><cmd>1ToggleTerm<cr>')
 
       vim.keymap.set('n', '<A-2>', '<cmd>2ToggleTerm direction=float<cr>', { desc = '[T]erminal' })
       vim.keymap.set('t', '<A-2>', '<C-\\><C-n><cmd>2ToggleTerm<cr>')
+
+      vim.keymap.set('n', '<A-3>', '<cmd>3ToggleTerm size=50 direction=horizontal<cr>', { desc = '[T]erminal' })
+      vim.keymap.set('t', '<A-3>', '<C-\\><C-n><cmd>3ToggleTerm<cr>')
     end,
   },
 
