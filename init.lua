@@ -194,6 +194,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Easy command to create a file
+vim.api.nvim_create_user_command('NewFile', function(args)
+  vim.cmd(':e %:h/' .. args['args'])
+end, { desc = 'Create file in from this relative path', nargs = 1 })
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -285,6 +290,9 @@ require('lazy').setup({
           -- Make transparent bg
           -- vim.cmd [[hi NvimTreeNormal guibg=NONE ctermbg=NONE]]
         end,
+        update_focused_file = {
+          enable = true,
+        },
       }
     end,
   },
@@ -569,7 +577,7 @@ require('lazy').setup({
     'xiyaowong/transparent.nvim',
     opts = {
       extra_groups = {
-        'NormalFloat', -- plugins which have float panel such as Lazy, Mason, LspInfo
+        -- 'NormalFloat', -- plugins which have float panel such as Lazy, Mason, LspInfo
         'NvimTreeNormal', -- NvimTree
       },
     },
