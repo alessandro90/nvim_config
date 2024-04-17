@@ -114,6 +114,8 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic error messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic quickfix list' })
 
+vim.keymap.set('n', '+', '$')
+vim.keymap.set('n', '-', '0')
 -- Close all ancillary windows with just 'q'
 vim.api.nvim_create_autocmd({ 'FileType' }, {
   group = vim.api.nvim_create_augroup('userconfig', { clear = true }),
@@ -236,6 +238,11 @@ require('lazy').setup({
         },
       }
     end,
+  },
+  {
+    'kaarmu/typst.vim',
+    ft = 'typst',
+    lazy = false,
   },
   {
     'nvim-lualine/lualine.nvim',
@@ -759,7 +766,11 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          find_files = {
+            hidden = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -945,6 +956,12 @@ require('lazy').setup({
         marksman = {},
         rust_analyzer = {},
         cmake = {},
+        typst_lsp = {
+          settings = {
+            exportPdf = 'onSave', -- Choose onType, onSave or never.
+            -- serverPath = "" -- Normally, there is no need to uncomment it.
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Many setups, the LSP (`tsserver`) will work just fine
@@ -1036,6 +1053,7 @@ require('lazy').setup({
         python = { 'isort', 'black' },
         c = { 'clang-format ' },
         cpp = { 'clang-format ' },
+        typst = { 'typstfmt' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -1085,7 +1103,11 @@ require('lazy').setup({
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       luasnip.config.setup {}
-
+      local cmp_mapping = require 'cmp.config.mapping'
+      local has_words_before = function()
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match '%s' == nil
+      end
       cmp.setup {
         snippet = {
           expand = function(args)
@@ -1100,10 +1122,30 @@ require('lazy').setup({
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
-          ['<Tab>'] = cmp.mapping.select_next_item(),
+          -- ['<Tab>'] = cmp.mapping.select_next_item(),
           -- Select the [p]revious item
-          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-
+          -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          ['<Tab>'] = cmp_mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            elseif has_words_before() then
+              -- cmp.complete()
+              fallback()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp_mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
           -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
