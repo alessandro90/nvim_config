@@ -35,6 +35,9 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -172,7 +175,8 @@ vim.keymap.set('n', '<leader>q', '<cmd>qa<cr>', { desc = 'Close and exit' })
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', { desc = 'Save file' })
 
 -- Select all file
-vim.keymap.set('n', '<C-a>', 'G<s-v>gg')
+-- vim.keymap.set('n', '<C-a>', 'G<s-v>gg')
+vim.keymap.set('n', '<C-s>', 'G<s-v>gg')
 
 -- Exit for terminal mode: does not untoggle the terminal
 vim.api.nvim_set_keymap('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
@@ -242,7 +246,7 @@ require('lazy').setup({
   {
     'kaarmu/typst.vim',
     ft = 'typst',
-    lazy = false,
+    lazy = true,
   },
   {
     'nvim-lualine/lualine.nvim',
@@ -1398,14 +1402,14 @@ require('lazy').setup({
   },
 })
 
-vim.keymap.set('n', '<leader>Lc', '<cmd>Lazy clean<cr>', { desc = '[C]lean' })
-vim.keymap.set('n', '<leader>LC', '<cmd>Lazy check<cr>', { desc = '[C]heck' })
-vim.keymap.set('n', '<leader>Lh', '<cmd>Lazy help<cr>', { desc = '[H]elp' })
-vim.keymap.set('n', '<leader>Ll', '<cmd>Lazy home<cr>', { desc = '[L]list' })
-vim.keymap.set('n', '<leader>Li', '<cmd>Lazy install<cr>', { desc = '[I]nstall' })
-vim.keymap.set('n', '<leader>LL', '<cmd>Lazy log<cr>', { desc = '[L]og' })
-vim.keymap.set('n', '<leader>Lu', '<cmd>Lazy update<cr>', { desc = '[U]pdate' })
-vim.keymap.set('n', '<leader>Ls', '<cmd>Lazy sync<cr>', { desc = '[S]ync' })
+vim.keymap.set('n', '<leader>Lc', '<cmd>Lazy clean<cr>', { desc = 'Clean' })
+vim.keymap.set('n', '<leader>LC', '<cmd>Lazy check<cr>', { desc = 'Check' })
+vim.keymap.set('n', '<leader>Lh', '<cmd>Lazy help<cr>', { desc = 'Help' })
+vim.keymap.set('n', '<leader>Ll', '<cmd>Lazy home<cr>', { desc = 'List' })
+vim.keymap.set('n', '<leader>Li', '<cmd>Lazy install<cr>', { desc = 'Install' })
+vim.keymap.set('n', '<leader>LL', '<cmd>Lazy log<cr>', { desc = 'Log' })
+vim.keymap.set('n', '<leader>Lu', '<cmd>Lazy update<cr>', { desc = 'Update' })
+vim.keymap.set('n', '<leader>Ls', '<cmd>Lazy sync<cr>', { desc = 'Sync' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
