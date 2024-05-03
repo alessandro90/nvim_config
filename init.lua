@@ -185,7 +185,8 @@ vim.api.nvim_set_keymap('t', '<esc>', [[<C-\><C-n>]], { noremap = true })
 vim.keymap.set('n', '<leader>bb', '<cmd>bp<cr>', { desc = 'Previous' })
 vim.keymap.set('n', '<leader>bn', '<cmd>bn<cr>', { desc = 'Next' })
 vim.keymap.set('n', '<leader>bC', '<cmd>%bd|e#|bd#<cr>', { desc = 'Close all but current' })
-vim.keymap.set('n', '<leader>bc', '<cmd>bd<cr>', { desc = 'Close' })
+-- vim.keymap.set('n', '<leader>bc', '<cmd>bd<cr>', { desc = 'Close' })
+vim.keymap.set('n', '<leader>bc', '<cmd>bp|sp|bn|bd <cr>', { desc = 'Close' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -770,10 +771,13 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
+        defaults = {
+          file_ignore_patterns = { '^./.git/', '^node_modules/' },
+        },
         pickers = {
-          find_files = {
-            hidden = true,
-          },
+          -- find_files = {
+          --   hidden = true,
+          -- },
         },
         extensions = {
           ['ui-select'] = {
