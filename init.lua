@@ -229,6 +229,15 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.keymap.set('n', '<leader>t', '<cmd>NvimTreeToggle<cr>', { desc = 'Toggle file tree' })
 
+-- Custom filetypes
+-- Add shader filetypes
+vim.filetype.add {
+  extension = {
+    vert = 'vert',
+    frag = 'frag',
+  },
+}
+
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
@@ -970,6 +979,7 @@ require('lazy').setup({
             -- serverPath = "" -- Normally, there is no need to uncomment it.
           },
         },
+        glsl_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Many setups, the LSP (`tsserver`) will work just fine
@@ -1035,7 +1045,6 @@ require('lazy').setup({
         scope = {
           enabled = true,
         },
-        -- exclude = { filetypes = { 'alpha' } },
       }
     end,
   },
@@ -1277,6 +1286,7 @@ require('lazy').setup({
         'vimdoc',
         'python',
         'rust',
+        'glsl',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1292,6 +1302,8 @@ require('lazy').setup({
     config = function(_, opts)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
+      vim.treesitter.language.register('glsl', 'vert')
+      vim.treesitter.language.register('glsl', 'frag')
       ---@diagnostic disable-next-line: missing-fields
       local more_opts = vim.tbl_deep_extend('force', opts, {
         incremental_selection = {
@@ -1414,6 +1426,5 @@ vim.keymap.set('n', '<leader>Li', '<cmd>Lazy install<cr>', { desc = 'Install' })
 vim.keymap.set('n', '<leader>LL', '<cmd>Lazy log<cr>', { desc = 'Log' })
 vim.keymap.set('n', '<leader>Lu', '<cmd>Lazy update<cr>', { desc = 'Update' })
 vim.keymap.set('n', '<leader>Ls', '<cmd>Lazy sync<cr>', { desc = 'Sync' })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
