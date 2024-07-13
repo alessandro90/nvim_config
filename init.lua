@@ -503,18 +503,35 @@ require('lazy').setup({
           buftypes = {},
           filetypes = {},
         },
+        delay = 500,
       }
 
       -- Document existing key chains
-      require('which-key').register {
-        ['<leader>r'] = { name = 'Rename', _ = 'which_key_ignore' },
-        ['<leader>s'] = { name = 'Search', _ = 'which_key_ignore' },
-        ['<leader>c'] = { name = 'Code', _ = 'which_key_ignore' },
-        ['<leader>b'] = { name = 'Buffers', _ = 'which_key_ignore' },
-        ['<leader>L'] = { name = 'Lazy', _ = 'which_key_ignore' },
-        ['<leader>l'] = { name = 'Lsp', _ = 'which_key_ignore' },
-        ['<leader>G'] = { name = 'Git', _ = 'which_key_ignore' },
+      require('which-key').add {
+        { '<leader>G', group = 'Git' },
+        { '<leader>G_', hidden = true },
+        { '<leader>L', group = 'Lazy' },
+        { '<leader>L_', hidden = true },
+        { '<leader>b', group = 'Buffers' },
+        { '<leader>b_', hidden = true },
+        { '<leader>c', group = 'Code' },
+        { '<leader>c_', hidden = true },
+        { '<leader>l', group = 'Lsp' },
+        { '<leader>l_', hidden = true },
+        { '<leader>r', group = 'Rename' },
+        { '<leader>r_', hidden = true },
+        { '<leader>s', group = 'Search' },
+        { '<leader>s_', hidden = true },
       }
+      -- require('which-key').register {
+      --   ['<leader>r'] = { name = 'Rename', _ = 'which_key_ignore' },
+      --   ['<leader>s'] = { name = 'Search', _ = 'which_key_ignore' },
+      --   ['<leader>c'] = { name = 'Code', _ = 'which_key_ignore' },
+      --   ['<leader>b'] = { name = 'Buffers', _ = 'which_key_ignore' },
+      --   ['<leader>L'] = { name = 'Lazy', _ = 'which_key_ignore' },
+      --   ['<leader>l'] = { name = 'Lsp', _ = 'which_key_ignore' },
+      --   ['<leader>G'] = { name = 'Git', _ = 'which_key_ignore' },
+      -- }
     end,
   },
   {
