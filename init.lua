@@ -438,7 +438,6 @@ require('lazy').setup({
           scroll_down = '<c-d>', -- binding to scroll down inside the popup
           scroll_up = '<c-u>', -- binding to scroll up inside the popup
         },
-        triggers = true, -- automatically setup triggers
         delay = 500,
       }
 
@@ -1176,6 +1175,7 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+  concurrency = 4,
 })
 
 vim.keymap.set('n', '<leader>Lc', '<cmd>Lazy clean<cr>', { desc = 'Clean' })
