@@ -723,10 +723,9 @@ require('lazy').setup({
         marksman = {},
         rust_analyzer = {},
         cmake = {},
-        typst_lsp = {
+        tinymist = {
           settings = {
             exportPdf = 'onSave', -- Choose onType, onSave or never.
-            -- serverPath = "" -- Normally, there is no need to uncomment it.
           },
         },
         glsl_analyzer = {},
