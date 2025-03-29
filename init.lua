@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields
 --[[
 - https://learnxinyminutes.com/docs/lua/
 
@@ -114,8 +115,8 @@ vim.keymap.set('n', '<tab>', '>>')
 vim.keymap.set('n', '<S-Tab>', '<<')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '[d', vim.diagnostic.get_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.get_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic error messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic quickfix list' })
 
@@ -238,6 +239,33 @@ vim.filetype.add {
     vert = 'vert',
     frag = 'frag',
   },
+}
+
+-- this is to show color in line number
+-- vim.diagnostic.config {
+--   signs = {
+--     text = {
+--       [vim.diagnostic.severity.ERROR] = '',
+--       [vim.diagnostic.severity.WARN] = '',
+--       [vim.diagnostic.severity.INFO] = '',
+--       [vim.diagnostic.severity.HINT] = '',
+--     },
+--     numhl = {
+--       [vim.diagnostic.severity.WARN] = 'WarningMsg',
+--       [vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+--       [vim.diagnostic.severity.INFO] = 'DiagnosticInfo',
+--       [vim.diagnostic.severity.HINT] = 'DiagnosticHint',
+--     },
+--   },
+-- }
+
+vim.diagnostic.config {
+  virtual_text = true,
+  signs = true,
+  update_in_insert = false,
+  underline = true,
+  severity_sort = false,
+  float = true,
 }
 
 require('lazy').setup({
