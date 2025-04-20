@@ -374,15 +374,32 @@ require('lazy').setup({
     version = '*',
     config = function()
       require('toggleterm').setup()
+      local function toggle_and_enter_insert(term_id, direction, size)
+        local cmd = term_id .. 'ToggleTerm direction=' .. direction
+        if size then
+          cmd = cmd .. ' size=' .. size -- Append size if provided
+        end
+        vim.cmd(cmd)
+        vim.defer_fn(function()
+          if vim.bo.filetype == 'toggleterm' then
+            vim.cmd 'startinsert' -- Force insert mode
+          end
+        end, 20) -- Slight delay to ensure toggle completes before switching mode
+      end
 
-      vim.keymap.set('n', '<A-1>', '<cmd>1ToggleTerm size=125 direction=vertical<cr>', { desc = '[T]erminal' })
-      vim.keymap.set('t', '<A-1>', '<C-\\><C-n><cmd>1ToggleTerm<cr>')
+      local function toggle_term(term_id, direction, size)
+        vim.keymap.set('n', '<A-' .. term_id .. '>', function()
+          toggle_and_enter_insert(term_id, direction, size)
+        end, { desc = '[T]erminal' })
+        vim.keymap.set('t', '<A-' .. term_id .. '>', function()
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', false)
+          toggle_and_enter_insert(term_id, direction, size)
+        end, { noremap = true, silent = true })
+      end
 
-      vim.keymap.set('n', '<A-2>', '<cmd>2ToggleTerm direction=float<cr>', { desc = '[T]erminal' })
-      vim.keymap.set('t', '<A-2>', '<C-\\><C-n><cmd>2ToggleTerm<cr>')
-
-      vim.keymap.set('n', '<A-3>', '<cmd>3ToggleTerm size=50 direction=horizontal<cr>', { desc = '[T]erminal' })
-      vim.keymap.set('t', '<A-3>', '<C-\\><C-n><cmd>3ToggleTerm<cr>')
+      toggle_term(1, 'vertical', 125)
+      toggle_term(2, 'float')
+      toggle_term(3, 'horizontal', 50)
     end,
   },
 
@@ -777,15 +794,15 @@ require('lazy').setup({
             },
           },
         },
-        hls = {
-          settings = {
-            haskell = {
-              cabalFormattingProvider = 'cabalfmt',
-              formattingProvider = 'ormolu',
-            },
-            filetypes = { 'haskell', 'lhaskell', 'cabal' },
-          },
-        },
+        -- hls = {
+        --   settings = {
+        --     haskell = {
+        --       cabalFormattingProvider = 'cabalfmt',
+        --       formattingProvider = 'ormolu',
+        --     },
+        --     filetypes = { 'haskell', 'lhaskell', 'cabal' },
+        --   },
+        -- },
       }
 
       -- Ensure the servers and tools above are installed
@@ -810,18 +827,40 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
+      require('mason-lspconfig').setup {}
+
+      for server_name, server in pairs(servers) do
+        if server_name ~= 'hls' then
+          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+          require('lspconfig')[server_name].setup(server)
+        end
+      end
+      -- hls is installed locally with ghcup, therefore handle it separately
+      require('lspconfig')['hls'].setup {
+        cmd = { vim.fn.exepath 'haskell-language-server-wrapper', '--lsp' },
+        filetypes = { 'haskell', 'lhaskell', 'cabal' },
+        root_dir = require('lspconfig.util').root_pattern('hie.yaml', 'stack.yaml', 'cabal.project', 'package.yaml', '*.cabal'),
+        settings = {
+          haskell = {
+            cabalFormattingProvider = 'cabalfmt',
+            formattingProvider = 'ormolu',
+          },
         },
+        capabilities = capabilities,
       }
+
+      -- require('mason-lspconfig').setup {
+      --   handlers = {
+      --     function(server_name)
+      --       local server = servers[server_name] or {}
+      --       -- This handles overriding only values explicitly passed
+      --       -- by the server configuration above. Useful when disabling
+      --       -- certain features of an LSP (for example, turning off formatting for tsserver)
+      --       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      --       require('lspconfig')[server_name].setup(server)
+      --     end,
+      --   },
+      -- }
     end,
   },
   {
