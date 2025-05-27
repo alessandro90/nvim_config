@@ -115,8 +115,36 @@ vim.keymap.set('n', '<tab>', '>>')
 vim.keymap.set('n', '<S-Tab>', '<<')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.get_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.get_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', ']d', function()
+  vim.diagnostic.jump { count = 1, float = true }
+end, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '[d', function()
+  vim.diagnostic.jump { count = -1, float = true }
+end, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']e', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR, float = true }
+end, { desc = 'Go to next error message' })
+vim.keymap.set('n', '[e', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR, float = true }
+end, { desc = 'Go to previous error message' })
+vim.keymap.set('n', ']w', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.WARN, float = true }
+end, { desc = 'Go to next warning message' })
+vim.keymap.set('n', '[w', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.WARN, float = true }
+end, { desc = 'Go to previous warning message' })
+vim.keymap.set('n', ']i', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.INFO, float = true }
+end, { desc = 'Go to next info message' })
+vim.keymap.set('n', '[i', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.INFO, float = true }
+end, { desc = 'Go to previous info message' })
+vim.keymap.set('n', ']h', function()
+  vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.HINT, float = true }
+end, { desc = 'Go to next hint message' })
+vim.keymap.set('n', '[h', function()
+  vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.HINT, float = true }
+end, { desc = 'Go to previous hint message' })
 vim.keymap.set('n', '<leader>le', vim.diagnostic.open_float, { desc = 'Show diagnostic error messages' })
 vim.keymap.set('n', '<leader>lq', vim.diagnostic.setloclist, { desc = 'Open diagnostic quickfix list' })
 
@@ -566,6 +594,7 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local actions = require 'telescope.actions'
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
@@ -577,6 +606,12 @@ require('lazy').setup({
         -- },
         defaults = {
           file_ignore_patterns = { '^./.git/', '^node_modules/' },
+          mappings = {
+            i = {
+              ['<CR>'] = false,
+              ['<C-y>'] = actions.select_default,
+            },
+          },
         },
         pickers = {
           -- find_files = {
@@ -825,7 +860,6 @@ require('lazy').setup({
         'flake8',
         'prettier',
         'clang-format',
-        'typstfmt',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -840,7 +874,8 @@ require('lazy').setup({
       -- hls is installed locally with ghcup, therefore handle it separately
       require('lspconfig')['hls'].setup {
         cmd = { vim.fn.exepath 'haskell-language-server-wrapper', '--lsp' },
-        filetypes = { 'haskell', 'lhaskell', 'cabal' },
+        -- filetypes = { 'haskell', 'lhaskell', 'cabal' },
+        filetypes = { 'haskell', 'lhaskell' },
         root_dir = require('lspconfig.util').root_pattern('hie.yaml', 'stack.yaml', 'cabal.project', 'package.yaml', '*.cabal'),
         settings = {
           haskell = {
@@ -901,7 +936,6 @@ require('lazy').setup({
         python = { 'isort', 'black' },
         c = { 'clang-format ' },
         cpp = { 'clang-format ' },
-        typst = { 'typstfmt' },
         markdown = { 'prettier' },
         md = { 'prettier' },
         --
@@ -969,7 +1003,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'enter',
+        preset = 'default',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1189,6 +1223,7 @@ require('lazy').setup({
       })
     end,
   },
+  'tpope/vim-fugitive',
   -- No dap support for now
   -- require 'plugins.debug',
 
