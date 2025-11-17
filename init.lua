@@ -828,6 +828,9 @@ require('lazy').setup({
               completion = {
                 callSnippet = 'Replace',
               },
+              diagnostics = {
+                globals = { 'vim' },
+              },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
@@ -871,14 +874,15 @@ require('lazy').setup({
         if server_name ~= 'hls' then
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
           vim.lsp.config(server_name, server)
+          -- vim.lsp.enable(server_name)
         end
       end
       -- hls is installed locally with ghcup, therefore handle it separately
       vim.lsp.config('hls', {
+        name = 'hls',
         cmd = { vim.fn.exepath 'haskell-language-server-wrapper', '--lsp' },
-        -- filetypes = { 'haskell', 'lhaskell', 'cabal' },
         filetypes = { 'haskell', 'lhaskell' },
-        root_dir = require('lspconfig.util').root_pattern('hie.yaml', 'stack.yaml', 'cabal.project', 'package.yaml', '*.cabal'),
+        -- root_dir = vim.fs.dirname(vim.fs.find({ 'hie.yaml', 'stack.yaml', 'cabal.project', 'package.yaml', '*.cabal' }, { upward = true })[1]),
         settings = {
           haskell = {
             cabalFormattingProvider = 'cabalfmt',
@@ -887,6 +891,7 @@ require('lazy').setup({
         },
         capabilities = capabilities,
       })
+      vim.lsp.enable { 'hls' }
     end,
   },
   {
@@ -1244,7 +1249,6 @@ require('lazy').setup({
   },
   concurrency = 4,
 })
-
 vim.keymap.set('n', '<leader>Lc', '<cmd>Lazy clean<cr>', { desc = 'Clean' })
 vim.keymap.set('n', '<leader>LC', '<cmd>Lazy check<cr>', { desc = 'Check' })
 vim.keymap.set('n', '<leader>Lh', '<cmd>Lazy help<cr>', { desc = 'Help' })
