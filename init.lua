@@ -19,6 +19,27 @@ which is very useful when you're not exactly sure of what you're looking for.
 If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
 --]]
 
+local lsp_log_path = vim.lsp.get_log_path()
+local f = io.open(lsp_log_path, 'r')
+if f then
+  local size = f:seek 'end'
+  f:close()
+  if size > 1024 * 1024 then -- 1 MB limit
+    os.remove(lsp_log_path)
+  end
+end
+
+-- Custom filetypes
+-- Add shader filetypes
+vim.filetype.add {
+  extension = {
+    vert = 'vert',
+    frag = 'frag',
+  },
+}
+
+vim.lsp.set_log_level 'error'
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -263,15 +284,6 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.keymap.set('n', '<leader>t', '<cmd>NvimTreeToggle<cr>', { desc = 'Toggle file tree' })
 
--- Custom filetypes
--- Add shader filetypes
-vim.filetype.add {
-  extension = {
-    vert = 'vert',
-    frag = 'frag',
-  },
-}
-
 -- this is to show color in line number
 -- vim.diagnostic.config {
 --   signs = {
@@ -325,7 +337,7 @@ require('lazy').setup({
     config = function()
       require('lualine').setup {
         options = {
-          theme = 'catppuccin',
+          theme = 'catppuccin-nvim',
         },
         sections = {
           lualine_c = {
@@ -920,19 +932,18 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        -- local disable_filetypes = { c = true, cpp = true }
+        -- local disable_filetypes = { lua = true }
         return {
           timeout_ms = 500,
           lsp_fallback = true,
-          -- lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
         }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
-        c = { 'clang-format ' },
-        cpp = { 'clang-format ' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
         markdown = { 'prettier' },
         md = { 'prettier' },
         --
