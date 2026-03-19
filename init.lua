@@ -113,6 +113,9 @@ vim.keymap.set('n', '<leader>h', '<cmd>nohlsearch<CR>', { desc = 'Clear highligh
 
 vim.keymap.set('n', '<tab>', '>>')
 vim.keymap.set('n', '<S-Tab>', '<<')
+vim.keymap.del('i', '<Tab>')
+vim.keymap.del('s', '<Tab>')
+vim.keymap.del({ 'i', 's' }, '<S-Tab>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', ']d', function()
@@ -806,7 +809,7 @@ require('lazy').setup({
         pyright = {},
         marksman = {},
         rust_analyzer = {},
-        cmake = {},
+        -- cmake = {},
         tinymist = {
           settings = {
             exportPdf = 'onSave', -- Choose onType, onSave or never.
