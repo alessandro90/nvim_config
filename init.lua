@@ -178,7 +178,7 @@ vim.keymap.set('n', '-', '0')
 vim.api.nvim_create_autocmd({ 'FileType' }, {
   group = vim.api.nvim_create_augroup('userconfig', { clear = true }),
   desc = "keymap 'q' to close help/quickfix/netrw/etc windows",
-  pattern = 'help,qf,netrw',
+  pattern = 'help,qf,netrw,fugitive,git',
   callback = function()
     vim.keymap.set('n', 'q', '<C-w>c', {
       buffer = true,
@@ -883,13 +883,16 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {}
+      -- require('mason-lspconfig').setup {}
+      require('mason-lspconfig').setup {
+        automatic_enable = false,
+      }
 
       for server_name, server in pairs(servers) do
         if server_name ~= 'hls' then
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
           vim.lsp.config(server_name, server)
-          -- vim.lsp.enable(server_name)
+          vim.lsp.enable(server_name)
         end
       end
       -- hls is installed locally with ghcup, therefore handle it separately
