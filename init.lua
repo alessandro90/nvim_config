@@ -19,7 +19,7 @@ which is very useful when you're not exactly sure of what you're looking for.
 If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
 --]]
 
-local lsp_log_path = vim.lsp.get_log_path()
+local lsp_log_path = vim.lsp.log.get_filename()
 local f = io.open(lsp_log_path, 'r')
 if f then
   local size = f:seek 'end'
@@ -38,7 +38,7 @@ vim.filetype.add {
   },
 }
 
-vim.lsp.set_log_level 'error'
+vim.lsp.log.set_level 'error'
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -1063,7 +1063,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'catppuccin'
+      vim.cmd.colorscheme 'catppuccin-frappe'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
