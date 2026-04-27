@@ -1146,24 +1146,44 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
-    config = function(_, opts)
+    init = function()
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function()
+          -- Enable treesitter highlighting and disable regex syntax
+          pcall(vim.treesitter.start)
+          -- Enable treesitter-based indentation
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
+      local ensureInstalled = {
+        'bash',
+        'c',
+        'cpp',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'vim',
+        'vimdoc',
+        'python',
+        'rust',
+        'glsl',
+      }
+      local alreadyInstalled = require('nvim-treesitter.config').get_installed()
+      local parsersToInstall = vim
+        .iter(ensureInstalled)
+        :filter(function(parser)
+          return not vim.tbl_contains(alreadyInstalled, parser)
+        end)
+        :totable()
+      require('nvim-treesitter').install(parsersToInstall)
+    end,
+    config = function(_, _)
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
 
       vim.treesitter.language.register('glsl', 'vert')
       vim.treesitter.language.register('glsl', 'frag')
-      ---@diagnostic disable-next-line: missing-fields
-      local more_opts = vim.tbl_deep_extend('force', opts, {
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            init_selection = 'gnn', -- set to `false` to disable one of the mappings
-            node_incremental = 'grn',
-            scope_incremental = 'grc',
-            node_decremental = 'grm',
-          },
-        },
-      })
-      require('nvim-treesitter.configs').setup(more_opts)
+      require('nvim-treesitter').setup()
       -- There are additional nvim-treesitter modules that you can use to interact
       -- with nvim-treesitter. You should go explore a few and see what interests you:
       --
